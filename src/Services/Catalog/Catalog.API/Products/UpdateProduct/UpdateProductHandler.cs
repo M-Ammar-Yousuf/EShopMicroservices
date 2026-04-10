@@ -1,5 +1,4 @@
-﻿
-namespace Catalog.API.Products.UpdateProduct;
+﻿namespace Catalog.API.Products.UpdateProduct;
 
 public record UpdateProductCommand(
     Guid Id,
@@ -10,6 +9,27 @@ public record UpdateProductCommand(
     decimal Price) : ICommand<UpdateProductResult>;
 
 public record UpdateProductResult(bool IsSuccess);
+
+public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
+{
+    public UpdateProductCommandValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty().WithMessage("Id is required");
+
+        RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required")
+    .Length(3, 150).WithMessage("Name must be between 3 and 150 characters");
+
+        RuleFor(x => x.Category).NotEmpty().WithMessage("Category is required");
+
+        RuleFor(x => x.Description).NotEmpty().WithMessage("Description is required")
+
+            .MaximumLength(500).WithMessage("Length should not be greater than 500 characters");
+
+        RuleFor(x => x.ImageFile).NotEmpty().WithMessage("ImageFile is required");
+
+        RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price must be greater than zero");
+    }
+}
 
 internal class UpdateProductCommandHandler(IDocumentSession session, ILogger<UpdateProductCommandHandler> logger) : ICommandHandler<UpdateProductCommand, UpdateProductResult>
 {
