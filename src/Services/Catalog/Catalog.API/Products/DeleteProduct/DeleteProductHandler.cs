@@ -22,7 +22,7 @@ internal class DeleteProductCommandHandler(IDocumentSession session, ILogger<Del
 
         if (product is null)
         {
-            throw new ProductNotFoundException();
+            throw new ProductNotFoundException(command.Id);
         }
 
         session.Delete(product);
